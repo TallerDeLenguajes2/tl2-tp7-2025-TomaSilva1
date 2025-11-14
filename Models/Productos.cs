@@ -7,4 +7,14 @@ public class Productos
     public int IdProducto { get => idProducto; set => idProducto = value; }
     public string Descripcion { get => descripcion; set => descripcion = value; }
     public int Precio { get => precio; set => precio = value; }
+
+    public Productos()
+    {
+        
+    }
+    public Productos(string desc, int precio)
+    {
+        this.Descripcion = desc;
+        this.precio = precio;
+    }
 }
