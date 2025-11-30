@@ -44,4 +44,12 @@ public class ProductosController : ControllerBase
         _productoRepositorio.borrarProducto(id);
         return NoContent();
     }
+
+    [HttpGet]
+    [Route("/obtenerProductoId")]
+    public ActionResult<Productos> obtenerProductoPorId(int id)
+    {
+        var pro = _productoRepositorio.obtenerProductoPorId(id);
+        return Ok(pro);
+    }
 }

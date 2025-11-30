@@ -7,6 +7,7 @@ public class ProductoRepositorio
 {
     private string _coneccionADB = "Data Source=DB/nueva.db";
 
+    //Obtener todos los productos
     public List<Productos> GetAll()
     {
         string sql_query = "SELECT * FROM productos";
@@ -35,6 +36,7 @@ public class ProductoRepositorio
         return productos;
     }
 
+    //Crear un nuevo producto.
     public int InsertarProducto(Productos Produc)
     {
         int nuevoID = 0;
@@ -55,31 +57,31 @@ public class ProductoRepositorio
         return nuevoID;
     }
 
-
-public int ActualizarPrecio(int idProduc, Productos produc)
-{
-
-    int filasAfectadas = 0; 
-       
-
-    using (SqliteConnection conexion = new SqliteConnection(_coneccionADB))
+    //Modificar un producto.
+    public int ActualizarPrecio(int idProduc, Productos produc)
     {
-        conexion.Open();
 
-        string sql = "UPDATE productos SET precio = @precio WHERE id_prod = @idProduc;";
+        int filasAfectadas = 0; 
+        
 
-        using (var comando = new SqliteCommand(sql, conexion))
+        using (SqliteConnection conexion = new SqliteConnection(_coneccionADB))
         {
-            comando.Parameters.AddWithValue("@precio", produc.Precio);
-            comando.Parameters.AddWithValue("@idProduc", idProduc);
+            conexion.Open();
 
-            filasAfectadas = comando.ExecuteNonQuery();
+            string sql = "UPDATE productos SET precio = @precio WHERE id_prod = @idProduc;";
+
+            using (var comando = new SqliteCommand(sql, conexion))
+            {
+                comando.Parameters.AddWithValue("@precio", produc.Precio);
+                comando.Parameters.AddWithValue("@idProduc", idProduc);
+
+                filasAfectadas = comando.ExecuteNonQuery();
+            }
         }
+
+        return filasAfectadas;
     }
-
-    return filasAfectadas;
-}
-
+    //Borrar un producto.
     public void borrarProducto(int id)
     {
         using var coneccion = new SqliteConnection(_coneccionADB);
@@ -93,4 +95,33 @@ public int ActualizarPrecio(int idProduc, Productos produc)
     }
 
     //public Productos ObtenerProductoPorId
+
+    //Obtener un producto por id.
+    public Productos obtenerProductoPorId(int id)
+    {
+        string sql = "SELECT * FROM productos WHERE id_prod = @id";
+
+        using var conexion = new SqliteConnection(_coneccionADB);
+        conexion.Open();
+
+        using var comando = new SqliteCommand(sql, conexion);
+        comando.Parameters.Add(new SqliteParameter("@id", id));
+
+        using var lector = comando.ExecuteReader();
+
+        if (!lector.Read())
+        {
+            return null;
+        }
+
+        var producto = new Productos()
+        {
+            IdProducto = Convert.ToInt32(lector["id_prod"]),
+            Descripcion = lector["descripcion"].ToString(),
+            Precio = Convert.ToInt32(lector["precio"])  
+        };
+
+        return producto;       
+    }
+
 }
